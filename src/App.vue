@@ -54,14 +54,14 @@ export default {
     Welcome
   },
   computed: {
-    c_usb: (vm) => vm.$store.__s('usb'),
-    c_pageLoading: (vm) => vm.$store.__s('pageLoading'),
-    c_isConnect: (vm) => vm.$store.__s('usb.connect'),
-    c_msg: (vm) => vm.$store.__s('usb.msg'),
-    c_brand: (vm) => vm.$store.__s('brand'),
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_needsBackup: (vm) => vm.$store.__s('usb.needsBackup'),
-    c_httpMessage: (vm) => vm.$store.__s('httpMessage')
+    c_usb: vm => vm.$store.__s('usb'),
+    c_pageLoading: vm => vm.$store.__s('pageLoading'),
+    c_isConnect: vm => vm.$store.__s('usb.connect'),
+    c_msg: vm => vm.$store.__s('usb.msg'),
+    c_brand: vm => vm.$store.__s('brand'),
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_needsBackup: vm => vm.$store.__s('usb.needsBackup'),
+    c_httpMessage: vm => vm.$store.__s('httpMessage')
   },
   async created() {
     const coinType = this.$store.__s('coinType').toLowerCase()
@@ -81,11 +81,7 @@ export default {
     },
     c_msg(msg) {
       if (msg.data.message === 'Device successfully initialized' || msg.data.message === 'Device recovered') {
-        if (this.c_brand.name === 'ABCKEY') {
-          this.$router.push({ path: `/${this.c_coinInfo.symbol}/wallet/account/` })
-        } else {
-          this.$router.push({ path: `/${this.c_brand.buildPath}/${this.c_coinInfo.symbol}/wallet/account/` })
-        }
+        this.$router.push({ path: `/${this.c_coinInfo.symbol}/wallet/account/` })
         this.$store.__s('usb.initialized', false)
       }
     },

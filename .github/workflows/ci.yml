@@ -1,0 +1,19 @@
+name: GitHub Actions Build
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Build and Deploy
+        uses: JamesIves/github-pages-deploy-action@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.MY_DEPLOY_KEY }}
+          BRANCH: gh-pages
+          FOLDER: dist
+          BUILD_SCRIPT: npm install && npm run build &&  cp ./dist/index.html ./dist/404.html && echo "ukey.defif.com" > ./dist/CNAME

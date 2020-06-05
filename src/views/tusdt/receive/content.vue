@@ -2,7 +2,7 @@
   <div class="receive-wrap">
     <div class="qr" v-show="this.d_selectedId > -1">
       <div id="qrcode"></div>
-      <div v-if="d_selectedId > -1">{{ `m/${this.c_protocol}'/${this.c_coinInfo.slip44}'/0'/0/${$store.__s('eth.account')}` }}</div>
+      <div v-if="d_selectedId > -1">{{ `m/${this.c_protocol}'/${this.c_coinInfo.slip44}'/0'/0/${$store.__s('trop.account')}` }}</div>
     </div>
     <v-snackbar v-model="d_alertShow" top>{{ d_errorText }}</v-snackbar>
     <v-overlay v-model="d_overlay"></v-overlay>
@@ -98,8 +98,8 @@ export default {
   },
   computed: {
     ...mapState(['usb', 'pageLoading']),
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_chooseType: (vm) => vm.$store.__s('dialog.chooseType'),
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_chooseType: vm => vm.$store.__s('dialog.chooseType'),
     c_protocol() {
       if (Reflect.has(this.c_coinInfo.bip, '49')) {
         return 49
@@ -133,7 +133,7 @@ export default {
       document.getElementsByClassName('qr')[0].style.top = coordinate.y - 80 + 'px'
 
       await this.$usb.cmd('EthereumGetAddress', {
-        address_n: [(44 | 0x80000000) >>> 0, (1 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, this.$store.__s('eth.account')],
+        address_n: [(44 | 0x80000000) >>> 0, (1 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, this.$store.__s('trop.account')],
         show_display: true
       })
       this._hideOverlay()
@@ -172,7 +172,7 @@ export default {
       }
       try {
         const result = await this.$usb.cmd('EthereumGetAddress', {
-          address_n: [(44 | 0x80000000) >>> 0, (1 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, this.$store.__s('eth.account')],
+          address_n: [(44 | 0x80000000) >>> 0, (1 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, this.$store.__s('trop.account')],
           show_display: false
         })
         this.d_currentAddress = result.data.address

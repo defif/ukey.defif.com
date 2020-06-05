@@ -28,7 +28,11 @@
             <v-icon :class="['ml-1', d_loading.upBalance && 'rotate']" size="16" color="primary">mdi-cached</v-icon>
           </v-btn>
           <div :class="['mt-1', d_loading.upBalance && 'blur']">
-            <span class="title font-weight-bold">{{ UnitHelper(d_balance).div(1000000).toString(10) }}</span>
+            <span class="title font-weight-bold">{{
+              UnitHelper(d_balance)
+                .div(1000000)
+                .toString(10)
+            }}</span>
             <span class="text-uppercase caption">&nbsp;{{ coin }}</span>
           </div>
         </v-col>
@@ -38,7 +42,13 @@
             <v-icon :class="['ml-1', (d_loading.upBalance || d_loading.upRate) && 'rotate']" size="16" color="primary">mdi-cached</v-icon>
           </v-btn>
           <div :class="['mt-1', (d_loading.upBalance || d_loading.upRate) && 'blur']">
-            <span class="title font-weight-bold">{{ UnitHelper(d_balance).div(1000000).times(this.d_rate).toFixed(8).toString(10) }}</span>
+            <span class="title font-weight-bold">{{
+              UnitHelper(d_balance)
+                .div(1000000)
+                .times(this.d_rate)
+                .toFixed(8)
+                .toString(10)
+            }}</span>
             <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
           </div>
         </v-col>
@@ -80,13 +90,24 @@
                 <template v-slot:activator="{ on }">
                   <v-chip v-on="on" :color="item.from.toLowerCase() === c_address.toLowerCase() ? 'red' : 'green'" small label outlined>
                     <v-icon left size="18">{{ item.from.toLowerCase() !== c_address.toLowerCase() ? 'mdi-plus' : 'mdi-minus' }}</v-icon>
-                    <span>{{ UnitHelper(item.value).div(1000000).toString() }}</span>
+                    <span>{{
+                      UnitHelper(item.value)
+                        .div(1000000)
+                        .toString()
+                    }}</span>
                     <span class="text-uppercase caption ml-1">{{ coin }}</span>
                   </v-chip>
                 </template>
                 <span>
                   <span>{{ item.from !== c_address.toLowerCase() ? $t('Received') : $t('Spent') }}</span>
-                  <b>&nbsp;{{ UnitHelper(item.value).div(1000000).times(d_rate).toString(10) }}</b>
+                  <b
+                    >&nbsp;{{
+                      UnitHelper(item.value)
+                        .div(1000000)
+                        .times(d_rate)
+                        .toString(10)
+                    }}</b
+                  >
                   <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
                 </span>
               </v-tooltip>
@@ -96,13 +117,24 @@
                 <template v-slot:activator="{ on }">
                   <v-chip v-on="on" small label outlined>
                     <v-icon left color="grey" size="22">mdi-wallet-outline</v-icon>
-                    <span>{{ UnitHelper(d_balance).div(1000000).toString(10) }}</span>
+                    <span>{{
+                      UnitHelper(d_balance)
+                        .div(1000000)
+                        .toString(10)
+                    }}</span>
                     <span class="text-uppercase caption ml-1">{{ coin }}</span>
                   </v-chip>
                 </template>
                 <span>
                   <span>{{ $t('Balance') }}</span>
-                  <b>&nbsp;{{ UnitHelper(d_balance).times(d_rate).div(1000000).toString(10) }}</b>
+                  <b
+                    >&nbsp;{{
+                      UnitHelper(d_balance)
+                        .times(d_rate)
+                        .div(1000000)
+                        .toString(10)
+                    }}</b
+                  >
                   <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
                 </span>
               </v-tooltip>
@@ -147,7 +179,14 @@
                 </tr>
                 <tr>
                   <td class="caption">{{ $t('Value') }}</td>
-                  <td class="caption">{{ UnitHelper(item.value).div(1000000).toString() }} USDT</td>
+                  <td class="caption">
+                    {{
+                      UnitHelper(item.value)
+                        .div(1000000)
+                        .toString()
+                    }}
+                    USDT
+                  </td>
                 </tr>
               </tbody>
             </template>
@@ -179,7 +218,11 @@
                             <b>{{ item.value }}</b>
                             <span class="text-uppercase caption">&nbsp;{{ coin }}</span>
                             <span>&nbsp;≈&nbsp;</span>
-                            <b>{{ UnitHelper(item.value).times(this.d_rate).toString(10) }}</b>
+                            <b>{{
+                              UnitHelper(item.value)
+                                .times(this.d_rate)
+                                .toString(10)
+                            }}</b>
                             <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
                           </span>
                         </v-tooltip>
@@ -286,16 +329,16 @@ export default {
   },
   mixins: [ETH],
   computed: {
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_protocol: (vm) => vm.$store.__s('coinProtocol'),
-    c_address: (vm) => vm.$store.__s('eth.address')
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_protocol: vm => vm.$store.__s('coinProtocol'),
+    c_address: vm => vm.$store.__s('trop.address')
   },
   async created() {
     const path = this.$route.path
     for (;;) {
       if (this.$route.path !== path) break
       this.upAll()
-      await new Promise((resolve) => setTimeout(resolve, 7700 * 1000))
+      await new Promise(resolve => setTimeout(resolve, 7700 * 1000))
     }
   },
   methods: {
@@ -303,7 +346,7 @@ export default {
       this.d_switchAccountShow = true
     },
     switchAccount(account) {
-      this.$store.__s('eth.account', account)
+      this.$store.__s('trop.account', account)
       this.d_txs = []
       this.upBalance()
       this.$message.success(this.$t('Switch account success.'))
@@ -311,7 +354,7 @@ export default {
     },
     async getEthResult() {
       this.d_address = await this.ethGetAddress()
-      this.$store.__s('eth.address', this.d_address)
+      this.$store.__s('trop.address', this.d_address)
       const data = await HTTP.Transaction.HistoryByContract({ coinName: 'trop', address: this.d_address, contract: this.c_coinInfo.testContract })
       if (data?.tokens?.length) {
         this.summary = data.tokens[0]
@@ -319,8 +362,13 @@ export default {
         this.summary = { balance: 0, contract: this.c_coinInfo.testContract, decimals: 6, name: 'Tether USD Testnet', symbol: 'USDT Testnet', transfers: 0, type: 'ERC20' }
       }
       this.transactions = data.transactions ? data.transactions : []
-      this.$store.__s('eth.balance', this.summary.balance ? this.summary.balance : 0)
-      this.$store.__s('balance', UnitHelper(this.summary.balance).div(1000000).toString())
+      this.$store.__s('trop.balance', this.summary.balance ? this.summary.balance : 0)
+      this.$store.__s(
+        'balance',
+        UnitHelper(this.summary.balance)
+          .div(1000000)
+          .toString()
+      )
       return data
     },
 
@@ -346,17 +394,32 @@ export default {
       this.d_rate = data
       this.d_loading.upRate = false
     },
-    sat2btc: (sat) => UnitHelper(sat).div(1000000000000000000).toNumber(),
-    btc2str: (btc) => UnitHelper(btc).dp(8, 1).toFormat(),
-    cash2str: (num) => UnitHelper(num).dp(8, 1).toFormat(),
-    btc2cash: (sat, rate) => UnitHelper(sat).times(rate).dp(2, 1).toFormat(),
-    unix2utc: (time) => new Date(time * 1000).toLocaleString(),
+    sat2btc: sat =>
+      UnitHelper(sat)
+        .div(1000000000000000000)
+        .toNumber(),
+    btc2str: btc =>
+      UnitHelper(btc)
+        .dp(8, 1)
+        .toFormat(),
+    cash2str: num =>
+      UnitHelper(num)
+        .dp(8, 1)
+        .toFormat(),
+    btc2cash: (sat, rate) =>
+      UnitHelper(sat)
+        .times(rate)
+        .dp(2, 1)
+        .toFormat(),
+    unix2utc: time => new Date(time * 1000).toLocaleString(),
     _fixTxs(txs) {
       this.d_txs = []
       if (!txs?.length) return
       for (let i = 0; i < txs?.length; i++) {
         const item = { ...txs[i].tokenTransfers[0], ...txs[i].ethereumSpecific, blockTime: txs[i].blockTime, txid: txs[i].txid, fees: txs[i].fees, blockHeight: txs[i].blockHeight }
-        txs[i].value = UnitHelper(txs[i].value).div(1000000).toString(10)
+        txs[i].value = UnitHelper(txs[i].value)
+          .div(1000000)
+          .toString(10)
         this.d_txs.push(item)
       }
     },

@@ -46,9 +46,13 @@
       </div>
       <div class="form">
         <div class="d-flex flex-column justify-start align-start pl-2">
-          <div class="subtitle-2" :class="c_utxoTotal.toString(10) !== '0' ? 'primary--text' : 'red--text'">ERC20 Testnet {{ $t('Available Balance') }}：{{ UnitHelper(c_utxoTotal, 'wei_eth').toString(10) }} TROP</div>
-          <div class="subtitle-2" :class="eth.balance.toString(10) !== '0' ? 'primary--text' : 'red--text'">
-            TUSDT {{ $t('Available Balance') }}：{{ UnitHelper(eth.balance).div(1000000).toString(10) }}
+          <div class="subtitle-2" :class="c_utxoTotal.toString(10) ? 'primary--text' : 'red--text'">ERC20 Testnet {{ $t('Available Balance') }}：{{ UnitHelper(c_utxoTotal, 'wei_eth').toString(10) }} TROP</div>
+          <div class="subtitle-2" :class="trop.balance.toString(10) ? 'primary--text' : 'red--text'">
+            TUSDT {{ $t('Available Balance') }}：{{
+              UnitHelper(trop.balance)
+                .div(1000000)
+                .toString(10)
+            }}
             TUSDT
           </div>
           <div class="subtitle-2">nonce:{{ d_utxoList[0].nonce ? d_utxoList[0].nonce : $t('Requesting the latest nonce...') }}</div>
@@ -63,7 +67,7 @@
           <v-chip outlined class="chip body-2"
             >{{ $t('Fees') }}
             {{ UnitHelper(c_totalFees, 'wei_eth').toString(10) }}
-            ETH
+            TROP
           </v-chip>
           <v-chip outlined color="primary" class="chip">{{ $t('Total') }} {{ d_txOut[0].amount }} TUSDT + {{ UnitHelper(c_totalFees, 'wei_eth').toString(10) }} TROP</v-chip>
         </div>
@@ -132,9 +136,9 @@ export default {
           amount: 0
         }
       ],
-      d_addressRules: [(value) => AddressHelper.test(value, 'eth') || this.$t('Invalid address')],
+      d_addressRules: [value => AddressHelper.test(value, 'eth') || this.$t('Invalid address')],
       d_amountRules: [
-        (value) => {
+        value => {
           const pattern = /^[+]{0,1}[1-9]\d*$|^[+]{0,1}(0\.\d*[1-9])$|^[+]{0,1}([1-9]\d*\.\d*[0-9])$/
           return pattern.test(value) || this.$t('Invalid amount')
         }
@@ -159,12 +163,12 @@ export default {
       const fee = UnitHelper(this.d_zoom).times(this.d_gasLimit)
       return UnitHelper(fee, 'gwei_wei')
     },
-    c_xpub: (vm) => vm.$store.__s('usb.xpub'),
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_coinProtocol: (vm) => vm.$store.__s('coinProtocol'),
-    c_pageLoading: (vm) => vm.$store.__s('pageLoading'),
-    c_usb: (vm) => vm.$store.__s('usb'),
-    eth: (vm) => vm.$store.__s('eth')
+    c_xpub: vm => vm.$store.__s('usb.xpub'),
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_coinProtocol: vm => vm.$store.__s('coinProtocol'),
+    c_pageLoading: vm => vm.$store.__s('pageLoading'),
+    c_usb: vm => vm.$store.__s('usb'),
+    trop: vm => vm.$store.__s('trop')
   },
   created() {
     this.$nextTick(() => {
@@ -177,7 +181,11 @@ export default {
     setDefaultGasLimit() {
       const len = this.d_txOut.length
       if (len > 3) {
-        this.d_gasLimit = UnitHelper(len).minus(3).times(60000).plus(88888).toString(10)
+        this.d_gasLimit = UnitHelper(len)
+          .minus(3)
+          .times(60000)
+          .plus(88888)
+          .toString(10)
       } else {
         this.d_gasLimit = '88888'
       }
@@ -192,7 +200,9 @@ export default {
       this.d_clickAll = false
     },
     sendAllBalance() {
-      this.d_txOut[0].amount = UnitHelper(this.eth.balance).div(1000000).toString(10)
+      this.d_txOut[0].amount = UnitHelper(this.trop.balance)
+        .div(1000000)
+        .toString(10)
       if (this.c_utxoTotal.toNumber() === 0) {
         this.$message.error(this.$t('Balance is empty!'))
         return
@@ -253,13 +263,12 @@ export default {
     // check the eth and usdt balance
     checkBalance() {
       // usdt
-      if (UnitHelper(this.d_txOut[0].amount).times(1000000).gt(this.eth.balance)) {
+      if (
+        UnitHelper(this.d_txOut[0].amount)
+          .times(1000000)
+          .gt(this.trop.balance)
+      ) {
         this.$message.error(this.$t('Your USDT account balance is insufficient!'))
-        return false
-      }
-      // eth
-      if (UnitHelper(this.c_utxoTotal).lt(this.c_totalFees)) {
-        this.$message.error(this.$t('Ethereum address does not have sufficient balance!'))
         return false
       }
       return true
@@ -327,14 +336,18 @@ export default {
     async signTx() {
       // Organize output data
       const txParams = {
-        bip32_path: `m/44'/${this.c_coinInfo.slip44}'/0'/0/${this.eth.account}`,
+        bip32_path: `m/44'/${this.c_coinInfo.slip44}'/0'/0/${this.trop.account}`,
         erc20: this.c_coinInfo.testContract,
         nonce: this.d_utxoList[0].nonce,
-        gas_price: UnitHelper(1, 'gwei_wei').times(this.d_zoom).toString(10),
+        gas_price: UnitHelper(1, 'gwei_wei')
+          .times(this.d_zoom)
+          .toString(10),
         gas_limit: this.d_gasLimit,
         to: this.d_txOut[0].address,
         chain_id: 3,
-        value: UnitHelper(this.d_txOut[0].amount).times(1000000).toString(10)
+        value: UnitHelper(this.d_txOut[0].amount)
+          .times(1000000)
+          .toString(10)
       }
 
       const result = await this.$usb.signETH(txParams)

@@ -36,12 +36,18 @@ export default {
       testList: ['tbtc', 'trop', 'tusdt']
     }
   },
+  computed: {
+    c_coinInfo: vm => vm.$store.__s('coinInfo')
+  },
   methods: {
     openBlockchainBrowser() {
-      console.log(`conintyp = ${this.coinType}`)
-      const type = this.coinType === 'usdt' ? 'eth' : this.coinType
-      const urlPrefix = this.coinType === 'tusdt' ? 'ropsten' : this.coinType
-      this.apiUrl = this.testList.includes(this.coinType) ? `https://${urlPrefix}1.trezor.io` : `https://www.blockchain.com/${type}`
+      if (this.testList.includes(this.c_coinInfo.symbol)) {
+        this.apiUrl = this.c_coinInfo.blockbook[0]
+      } else {
+        const type = this.c_coinInfo.symbol === 'usdt' ? 'eth' : this.this.c_coinInfo.symbol
+        this.apiUrl = `https://www.blockchain.com/${type}1`
+      }
+
       window.open(`${this.apiUrl}/tx/${this.transactionHash}`, 'blank')
     },
     async copy() {

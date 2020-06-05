@@ -59,26 +59,41 @@ export default {
   },
   created() {
     this.d_show = this.$props.show
-    this.currentSelect = this.$store.__s('eth.account')
+    this.currentSelect = this.c_account
     this.initAddressList()
+  },
+  computed: {
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_trop: vm => vm.$store.__s('trop'),
+    c_eth: vm => vm.$store.__s('eth'),
+    c_account() {
+      const type = this.c_coinInfo.symbol
+      switch (type) {
+        case 'eth':
+        case 'usdt':
+          return this.c_eth.account
+        case 'trop':
+        case 'tusdt':
+          return this.c_trop.account
+        default:
+          return this.c_trop.account
+      }
+    }
   },
   methods: {
     async initAddressList() {
       this.addressList = []
-      const storageList = JSON.parse(localStorage.getItem(this.currentAddress))
-      if (storageList) {
-        this.addressList = storageList
-        return
-      }
       for (let i = 0; i < 5; i++) {
         const result = await this.$usb.cmd('EthereumGetAddress', {
-          address_n: [(44 | 0x80000000) >>> 0, (60 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, i],
+          address_n: [(44 | 0x80000000) >>> 0, (this.c_coinInfo.slip44 | 0x80000000) >>> 0, (0 | 0x80000000) >>> 0, 0, i],
           show_display: false
         })
-        const temp = { address: result.data.address, selected: this.currentAddress === result.data.address }
+        const temp = { address: result.data.address, selected: this.c_account === i }
+        if (this.c_account === i) {
+          this.currentSelect = i
+        }
         this.addressList.push(temp)
       }
-      localStorage.setItem(this.currentAddress, JSON.stringify(this.addressList))
     },
     selectedAddress(index) {
       this.addressList.splice(this.currentSelect, 1, { ...this.addressList[this.currentSelect], selected: false })
@@ -86,7 +101,7 @@ export default {
       this.currentSelect = index
     },
     confirm() {
-      if (this.currentSelect !== this.$store.__s('eth.account')) {
+      if (this.currentSelect !== this.c_account) {
         this.$emit('on-change', this.currentSelect)
       } else {
         this.close()

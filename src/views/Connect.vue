@@ -19,7 +19,10 @@
       <span class="subtitle-2">&copy; {{ c_brand.domain }}</span>
     </div>
     <div class="language-wrap">
-      <v-btn text color="primary" @click="$store.__s('dialog.language', true)"><v-icon size="medium" class="pr-4">mdi-translate</v-icon>{{ $t('name') }}</v-btn>
+      <div class="d-flex">
+        <v-btn text color="primary" @click="$store.__s('dialog.language', true)"><v-icon size="medium" class="pr-4">mdi-translate</v-icon>{{ $t('name') }}</v-btn>
+        <v-btn text color="warning" @click="resetAll">{{ $t('Reset') }}</v-btn>
+      </div>
     </div>
   </v-container>
 </template>
@@ -46,11 +49,17 @@ export default {
      */
     async connect() {
       await this.$usb.add()
+    },
+    resetAll() {
+      localStorage.removeItem('vuex')
+      this.$message.success(this.$t('Reset successful'))
     }
   },
   i18n: {
     messages: {
       zhCN: {
+        Reset: '重置应用',
+        'Reset successful': '重置应用成功',
         'Please Connect ABCKEY...': '等待连接',
         'Please Connect DF_UKey...': '迪富U盾未连接...',
         'Check For Device': '连接设备',

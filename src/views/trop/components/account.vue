@@ -28,7 +28,11 @@
             <v-icon :class="['ml-1', d_loading.upBalance && 'rotate']" size="16" color="primary">mdi-cached</v-icon>
           </v-btn>
           <div :class="['mt-1', d_loading.upBalance && 'blur']">
-            <span class="title font-weight-bold">{{ UnitHelper(d_balance, 'wei_eth').toFixed(8).toString(10) }}</span>
+            <span class="title font-weight-bold">{{
+              UnitHelper(d_balance, 'wei_eth')
+                .toFixed(8)
+                .toString(10)
+            }}</span>
             <span class="text-uppercase caption">&nbsp;{{ coin }}</span>
           </div>
         </v-col>
@@ -38,7 +42,12 @@
             <v-icon :class="['ml-1', (d_loading.upBalance || d_loading.upRate) && 'rotate']" size="16" color="primary">mdi-cached</v-icon>
           </v-btn>
           <div :class="['mt-1', (d_loading.upBalance || d_loading.upRate) && 'blur']">
-            <span class="title font-weight-bold">{{ UnitHelper(d_balance, 'wei_eth').times(d_rate).toFixed(8).toString(10) }}</span>
+            <span class="title font-weight-bold">{{
+              UnitHelper(d_balance, 'wei_eth')
+                .times(d_rate)
+                .toFixed(8)
+                .toString(10)
+            }}</span>
             <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
           </div>
         </v-col>
@@ -165,7 +174,13 @@
                 </template>
                 <span>
                   <span>{{ $t('Balance') }}</span>
-                  <b>&nbsp;{{ UnitHelper(c_balance).times(d_rate).toString() }}</b>
+                  <b
+                    >&nbsp;{{
+                      UnitHelper(c_balance)
+                        .times(d_rate)
+                        .toString()
+                    }}</b
+                  >
                   <span class="text-uppercase caption">&nbsp;{{ cash }}</span>
                 </span>
               </v-tooltip>
@@ -371,33 +386,33 @@ export default {
   },
   mixins: [ETH],
   computed: {
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_protocol: (vm) => vm.$store.__s('coinProtocol'),
-    c_address: (vm) => vm.$store.__s('eth.address'),
-    c_balance: (vm) => vm.$store.__s('balance')
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_protocol: vm => vm.$store.__s('coinProtocol'),
+    c_address: vm => vm.$store.__s('trop.address'),
+    c_balance: vm => vm.$store.__s('balance')
   },
   async created() {
     const path = this.$route.path
     for (;;) {
       if (this.$route.path !== path) break
       this.upAll()
-      await new Promise((resolve) => setTimeout(resolve, 77 * 1000))
+      await new Promise(resolve => setTimeout(resolve, 77 * 1000))
     }
   },
   methods: {
     switchAccount(account) {
-      this.$store.__s('eth.account', account)
+      this.$store.__s('trop.account', account)
       this.d_txs = []
       this.upBalance()
       this.$message.success(this.$t('Switch account success.'))
       this.d_switchAccountShow = false
     },
     changeAccount() {
-      this.$message.info(this.$t('Testnet does not support switching other accounts'))
+      this.d_switchAccountShow = true
     },
     async getEthResult() {
       this.d_address = await this.ethGetAddress()
-      this.$store.__s('eth.address', this.d_address)
+      this.$store.__s('trop.address', this.d_address)
       const r = await HTTP.Transaction.HistoryByAddress({ coinName: this.c_coinInfo.symbol, address: this.d_address })
       return r
     },
@@ -411,8 +426,13 @@ export default {
       if (result.error) return
       const data = result
       this.d_balance = data.balance
-      this.$store.__s('balance', UnitHelper(this.d_balance, 'wei_eth').toFixed(6).toString())
-      this.$store.__s('eth.balance', data.balance)
+      this.$store.__s(
+        'balance',
+        UnitHelper(this.d_balance, 'wei_eth')
+          .toFixed(6)
+          .toString()
+      )
+      this.$store.__s('trop.balance', data.balance)
       this.d_unconfirmedBalance = data.unconfirmedBalance
       this.d_unconfirmedTxs = data.unconfirmedTxs
       this.d_transactionCount = data.txs
@@ -426,11 +446,24 @@ export default {
       this.d_rate = data
       this.d_loading.upRate = false
     },
-    sat2btc: (sat) => UnitHelper(sat).div(1000000000000000000).toNumber(),
-    btc2str: (btc) => UnitHelper(btc).dp(8, 1).toFormat(),
-    cash2str: (num) => UnitHelper(num).dp(8, 1).toFormat(),
-    btc2cash: (sat, rate) => UnitHelper(sat).times(rate).dp(2, 1).toFormat(),
-    unix2utc: (time) => new Date(time * 1000).toLocaleString(),
+    sat2btc: sat =>
+      UnitHelper(sat)
+        .div(1000000000000000000)
+        .toNumber(),
+    btc2str: btc =>
+      UnitHelper(btc)
+        .dp(8, 1)
+        .toFormat(),
+    cash2str: num =>
+      UnitHelper(num)
+        .dp(8, 1)
+        .toFormat(),
+    btc2cash: (sat, rate) =>
+      UnitHelper(sat)
+        .times(rate)
+        .dp(2, 1)
+        .toFormat(),
+    unix2utc: time => new Date(time * 1000).toLocaleString(),
     _fixTxs(txs) {
       if (!txs) return
       for (let i = 0; i < txs?.length; i++) {
@@ -452,7 +485,7 @@ export default {
           txs[i].vout[y].own = this._isOwnAddr(txs[i].vout[y].addresses[0])
         }
       }
-      this.d_txs = txs.filter(function (item) {
+      this.d_txs = txs.filter(function(item) {
         return item.value !== '0'
       })
     },

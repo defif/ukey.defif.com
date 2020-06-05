@@ -46,7 +46,7 @@
       </div>
       <div class="form">
         <div class="left">
-          <div class="subtitle-2" :class="eth.balance ? 'primary--text' : 'red--text'">{{ $t('Available Balance') }}：{{ UnitHelper(eth.balance, 'wei_eth').toString(10) }} {{ c_coinInfo.symbol.toUpperCase() }}</div>
+          <div class="subtitle-2" :class="trop.balance ? 'primary--text' : 'red--text'">{{ $t('Available Balance') }}：{{ UnitHelper(trop.balance, 'wei_eth').toString(10) }} {{ c_coinInfo.symbol.toUpperCase() }}</div>
           <div class="subtitle-2">nonce:{{ d_utxoList[0].nonce ? d_utxoList[0].nonce : $t('Requesting the latest nonce...') }}</div>
           <v-row class="mt-4">
             <v-col cols="10">
@@ -172,7 +172,7 @@ export default {
     c_coinProtocol: vm => vm.$store.__s('coinProtocol'),
     c_pageLoading: vm => vm.$store.__s('pageLoading'),
     c_usb: vm => vm.$store.__s('usb'),
-    eth: vm => vm.$store.__s('eth')
+    trop: vm => vm.$store.__s('trop')
   },
   created() {
     this.$nextTick(() => {
@@ -337,7 +337,7 @@ export default {
       // Organize output data
       this.d_gasLimit = this.d_sendType === 'normal' ? '21000' : this.d_gasLimit
       const txParams = {
-        bip32_path: `m/44'/60'/0'/0/${this.eth.account}`,
+        bip32_path: `m/44'/${this.c_coinInfo.slip44}'/0'/0/${this.trop.account}`,
         nonce: this.d_utxoList[0].nonce,
         gas_price: UnitHelper(1, 'gwei_wei')
           .times(this.d_zoom)

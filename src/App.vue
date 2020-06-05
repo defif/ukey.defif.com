@@ -95,9 +95,7 @@ export default {
     messages: {
       zhCN: {
         'Device connected': '设备连接成功',
-        'Device disconnected': '设备断开连接',
-        'Your device is not backed up. To ensure the safety of your funds, please backup immediately!': '您的设备未备份。 为了确保您的资金安全，请立即备份！',
-        'Backup Now': ' 立即备份 '
+        'Device disconnected': '设备断开连接'
       }
     }
   }

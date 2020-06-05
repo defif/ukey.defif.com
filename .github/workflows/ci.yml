@@ -16,4 +16,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.MY_DEPLOY_KEY }}
           BRANCH: gh-pages
           FOLDER: dist
-          BUILD_SCRIPT: yarn && yarn build &&  cp ./dist/index.html ./dist/404.html && echo "ukey.defif.com" > ./dist/CNAME
+          BUILD_SCRIPT: yarn && yarn build &&  cp ./dist/index.html ./dist/404.html

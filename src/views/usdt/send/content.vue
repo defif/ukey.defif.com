@@ -338,7 +338,7 @@ export default {
       // Organize output data
       console.log(this.d_gasLimit)
       const txParams = {
-        bip32_path: `m/44'/60'/0'/0/${this.eth.account}`,
+        bip32_path: `m/44'/${this.c_coinInfo.slip44}'/0'/0/${this.eth.account}`,
         erc20: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
         nonce: this.d_utxoList[0].nonce,
         gas_price: UnitHelper(1, 'gwei_wei')

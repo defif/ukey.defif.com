@@ -19,7 +19,7 @@ export default {
     Failure: '失败',
     Passphrase: '密码短语',
     'Transaction Detail': '交易详情',
-    'Copy': '复制',
+    Copy: '复制',
     'Enter Passphrase': '请输入密码短语',
     'Enter Word': '确认输入',
     'Enter PIN': '确认PIN码',

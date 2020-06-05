@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     openBlockchainBrowser() {
+      console.log(`conintyp = ${this.coinType}`)
       const type = this.coinType === 'usdt' ? 'eth' : this.coinType
       const urlPrefix = this.coinType === 'tusdt' ? 'ropsten' : this.coinType
       this.apiUrl = this.testList.includes(this.coinType) ? `https://${urlPrefix}1.trezor.io` : `https://www.blockchain.com/${type}`

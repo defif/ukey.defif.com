@@ -271,11 +271,7 @@ export default {
         this.$message.error(this.$t('Your USDT account balance is insufficient!'))
         return false
       }
-      // eth
-      if (UnitHelper(this.c_utxoTotal).lt(this.c_totalFees)) {
-        this.$message.error(this.$t('Ethereum address does not have sufficient balance!'))
-        return false
-      }
+
       return true
     },
     errorBroadcast(error) {
@@ -340,8 +336,9 @@ export default {
 
     async signTx() {
       // Organize output data
+      console.log(this.d_gasLimit)
       const txParams = {
-        bip32_path: "m/44'/60'/0'/0/0",
+        bip32_path: `m/44'/60'/0'/0/${this.eth.account}`,
         erc20: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
         nonce: this.d_utxoList[0].nonce,
         gas_price: UnitHelper(1, 'gwei_wei')

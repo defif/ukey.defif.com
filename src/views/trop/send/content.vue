@@ -145,9 +145,9 @@ export default {
           amount: 0
         }
       ],
-      d_addressRules: [(value) => AddressHelper.test(value, 'eth', 'testnet') || this.$t('Invalid address')],
+      d_addressRules: [value => AddressHelper.test(value, 'eth', 'testnet') || this.$t('Invalid address')],
       d_amountRules: [
-        (value) => {
+        value => {
           const pattern = /^[+]{0,1}[1-9]\d*$|^[+]{0,1}(0\.\d*[1-9])$|^[+]{0,1}([1-9]\d*\.\d*[0-9])$/
           return pattern.test(value) || this.$t('Invalid amount')
         }
@@ -166,13 +166,13 @@ export default {
       const fee = UnitHelper(this.d_zoom).times(this.d_gasLimit)
       return UnitHelper(fee, 'gwei_wei')
     },
-    c_total: (vm) => vm.c_totalAmounts.plus(vm.c_totalFees),
-    c_xpub: (vm) => vm.$store.__s('usb.xpub'),
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_coinProtocol: (vm) => vm.$store.__s('coinProtocol'),
-    c_pageLoading: (vm) => vm.$store.__s('pageLoading'),
-    c_usb: (vm) => vm.$store.__s('usb'),
-    eth: (vm) => vm.$store.__s('eth')
+    c_total: vm => vm.c_totalAmounts.plus(vm.c_totalFees),
+    c_xpub: vm => vm.$store.__s('usb.xpub'),
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_coinProtocol: vm => vm.$store.__s('coinProtocol'),
+    c_pageLoading: vm => vm.$store.__s('pageLoading'),
+    c_usb: vm => vm.$store.__s('usb'),
+    eth: vm => vm.$store.__s('eth')
   },
   created() {
     this.$nextTick(() => {
@@ -199,7 +199,11 @@ export default {
     setDefaultGasLimit() {
       const len = this.d_txOut.length
       if (len > 3) {
-        this.d_gasLimit = UnitHelper(len).minus(3).times(60000).plus(88888).toString(10)
+        this.d_gasLimit = UnitHelper(len)
+          .minus(3)
+          .times(60000)
+          .plus(88888)
+          .toString(10)
       } else {
         this.d_gasLimit = '60000'
       }
@@ -333,9 +337,11 @@ export default {
       // Organize output data
       this.d_gasLimit = this.d_sendType === 'normal' ? '21000' : this.d_gasLimit
       const txParams = {
-        bip32_path: "m/44'/1'/0'/0/0",
+        bip32_path: `m/44'/60'/0'/0/${this.eth.account}`,
         nonce: this.d_utxoList[0].nonce,
-        gas_price: UnitHelper(1, 'gwei_wei').times(this.d_zoom).toString(10),
+        gas_price: UnitHelper(1, 'gwei_wei')
+          .times(this.d_zoom)
+          .toString(10),
         gas_limit: this.d_gasLimit,
         to: this.d_txOut[0].address,
         chain_id: 3,
@@ -360,7 +366,9 @@ export default {
     },
     c_totalFees() {
       if (this.d_clickAll) {
-        const mount = UnitHelper(this.c_utxoTotal).minus(this.c_totalFees).toString()
+        const mount = UnitHelper(this.c_utxoTotal)
+          .minus(this.c_totalFees)
+          .toString()
         this.d_txOut.splice(0, 1, { ...this.d_txOut[0], amount: UnitHelper(mount, 'wei_eth').toNumber() })
       }
     }

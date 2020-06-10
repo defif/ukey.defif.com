@@ -5,7 +5,7 @@
       <div v-if="d_selectedId > -1">{{ `m/${this.c_protocol}'/${this.c_coinInfo.slip44}'/0'/0/${$store.__s('trop.account')}` }}</div>
     </div>
     <v-snackbar v-model="d_alertShow" top>{{ d_errorText }}</v-snackbar>
-    <v-overlay v-model="d_overlay"></v-overlay>
+    <v-overlay v-model="d_overlay" z-index="99999"></v-overlay>
     <v-card>
       <v-tabs v-model="d_tab" class="pa-6 pb-3">
         <v-tab>{{ $t('New Address') }}</v-tab>
@@ -220,7 +220,6 @@ export default {
 
 <style lang="scss" scoped>
 .receive-wrap {
-  position: relative;
   width: 960px;
   margin: 20px auto;
 }
@@ -248,7 +247,7 @@ export default {
 }
 .highlight-2 {
   position: relative;
-  z-index: 99999;
+  z-index: 999999;
   border-radius: 4px;
   top: -5px;
   left: 15px;
@@ -264,7 +263,7 @@ export default {
 }
 .qr {
   position: fixed;
-  z-index: 99999;
+  z-index: 999999;
   padding: 6px;
   background: #fff;
   right: 20%;

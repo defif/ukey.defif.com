@@ -6,9 +6,9 @@
       <bootloader v-else-if="c_usb.bootloaderMode" />
       <first-guide v-else-if="!c_usb.initialized" />
       <load-data v-else-if="!c_usb.xpub" />
-      <v-content v-else class="app-content" style="min-height: 100vh;">
+      <v-content v-else style="min-height: 100vh;" class="app-content">
         <top-bar />
-        <v-container fluid class="pa-0">
+        <v-container fluid class="pa-0 app-container">
           <side-navbar />
           <backup-alert />
           <loading v-show="c_pageLoading" />
@@ -103,6 +103,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .app-content {
-  background: #f5f5f5;
+  background: url('./assets/bg.png') center bottom no-repeat;
+  background-color: #f5f5f5;
+  background-size: 100% 85%;
 }
 </style>

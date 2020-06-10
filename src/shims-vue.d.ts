@@ -4,7 +4,6 @@ import { Store } from 'vuex'
 
 declare module 'vue/types/vue' {
   interface Vue {
-    (vuetify: any, ...obj: any): void
     $router: VueRouter
     $route: Route
     $axios: AxiosInstance

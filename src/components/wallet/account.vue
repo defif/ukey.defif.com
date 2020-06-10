@@ -379,9 +379,9 @@ export default {
     }
   },
   computed: {
-    c_coinInfo: (vm) => vm.$store.__s('coinInfo'),
-    c_protocol: (vm) => vm.$store.__s('coinProtocol'),
-    c_addressType: (vm) => vm.$store.__s('addressType'),
+    c_coinInfo: vm => vm.$store.__s('coinInfo'),
+    c_protocol: vm => vm.$store.__s('coinProtocol'),
+    c_addressType: vm => vm.$store.__s('addressType'),
     c_switchCashName() {
       switch (this.c_coinInfo.name.toLowerCase()) {
         case 'tbtc':
@@ -389,7 +389,7 @@ export default {
         case 'trop':
           return 'eth'
         default:
-          return 'btc'
+          return this.c_coinInfo.name.toLowerCase()
       }
     }
   },
@@ -398,7 +398,7 @@ export default {
     for (;;) {
       if (this.$route.path !== path) break
       this.upAll()
-      await new Promise((resolve) => setTimeout(resolve, 77 * 1000))
+      await new Promise(resolve => setTimeout(resolve, 77 * 1000))
     }
   },
   methods: {
@@ -463,11 +463,24 @@ export default {
       this.d_rate = data
       this.d_loading.upRate = false
     },
-    sat2btc: (sat) => UnitHelper(sat).div(100000000).toNumber(),
-    btc2str: (btc) => UnitHelper(btc).dp(8, 1).toFormat(),
-    cash2str: (num) => UnitHelper(num).dp(8, 1).toFormat(),
-    btc2cash: (sat, rate) => UnitHelper(sat).times(rate).dp(2, 1).toFormat(),
-    unix2utc: (time) => new Date(time * 1000).toLocaleString(),
+    sat2btc: sat =>
+      UnitHelper(sat)
+        .div(100000000)
+        .toNumber(),
+    btc2str: btc =>
+      UnitHelper(btc)
+        .dp(8, 1)
+        .toFormat(),
+    cash2str: num =>
+      UnitHelper(num)
+        .dp(8, 1)
+        .toFormat(),
+    btc2cash: (sat, rate) =>
+      UnitHelper(sat)
+        .times(rate)
+        .dp(2, 1)
+        .toFormat(),
+    unix2utc: time => new Date(time * 1000).toLocaleString(),
     _fixTxs(txs, tokens) {
       if (!txs?.length) return
       for (let i = 0; i < txs?.length; i++) {

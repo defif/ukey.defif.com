@@ -232,7 +232,7 @@ export default {
         'Total Receive': '累积接收',
         'No Record': '暂无记录',
         'Get device address error': '获取设备地址错误',
-        'Please check the address in your device': '请在设备上核对地址'
+        'Please check the address in your device': '请在设备上核对地址,并在设备上执行确认操作'
       }
     }
   }

@@ -1,3 +1,4 @@
+/* disable-eslint */
 export default {
   zhCN: {
     name: '中文（简体）',
@@ -20,6 +21,7 @@ export default {
     Passphrase: '密码短语',
     'Transaction Detail': '交易详情',
     Copy: '复制',
+    'dust (code 64)': '交易额太小,矿工拒绝打包',
     'Enter Passphrase': '请输入密码短语',
     'Enter Word': '确认输入',
     'Enter PIN': '确认PIN码',
